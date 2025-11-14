@@ -2,7 +2,6 @@ import Address from '../models/Address.js';
 import User from '../models/user.js';
 import { sendOTP } from '../utils/sendOtp.js';
 import jwt from 'jsonwebtoken';
-import { validateAddress, validateOrderItemSchema } from '../utils/validateOrderItemSchema.js';
 
  // Replace with your secret key
 
