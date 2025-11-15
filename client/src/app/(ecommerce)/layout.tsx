@@ -1,8 +1,9 @@
-import EcomNav from '@/components/shared/header/EcomNav';
-import EcomFooter from '@/components/shared/footer/EcomFooter';
-import React from 'react'
 import FeaturesBanner from '@/components/shared/feature/FeatureBanner';
 import NewsletterSubscription from '@/components/shared/feature/NewsletterSubscription';
+import EcomFooter from '@/components/shared/footer/EcomFooter';
+import EcomNav from '@/components/shared/header/EcomNav';
+import React from 'react';
+import QueryProvider from '../QueryProvider';
 
 const layout = ({
   children,
@@ -12,7 +13,9 @@ const layout = ({
   return (
     <div>
       <EcomNav />
-      {children}
+      <QueryProvider>
+         {children}
+      </QueryProvider>
       <FeaturesBanner />
       <NewsletterSubscription />
       <EcomFooter />
