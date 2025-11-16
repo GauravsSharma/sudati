@@ -11,15 +11,13 @@ const layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div>
+    <QueryProvider>
       <EcomNav />
-      <QueryProvider>
-         {children}
-      </QueryProvider>
+      {children}
       <FeaturesBanner />
       <NewsletterSubscription />
       <EcomFooter />
-    </div>
+    </QueryProvider>
   )
 }
 

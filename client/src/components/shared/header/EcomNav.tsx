@@ -5,13 +5,14 @@ import Link from "next/link";
 import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
 import Image from "next/image";
 import LoginModal from "@/components/models/LoginModel";
+import { useUserStore } from "@/stores/user.store";
 
 const EcomNav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showTopBar, setShowTopBar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-
+  const user = useUserStore((s) => s.user);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -56,12 +57,12 @@ const EcomNav = () => {
             <Link href="/contact_us" className="hover:text-gray-800 transition-colors text-xs font-semibold">
               Contact Us
             </Link>
-            <span className="text-gray-300">|</span>
-            <button className="hover:text-gray-800 transition-colors text-xs font-semibold"
+            {!user && <span className="text-gray-300">|</span>}
+           {!user && <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
             onClick={() => setIsOpen(true)}
             >
               Login
-            </button>
+            </button>}
           </div>
         </div>
       </div>
