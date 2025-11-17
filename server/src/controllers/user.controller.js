@@ -3,7 +3,7 @@ import User from '../models/user.js';
 import { sendOTP } from '../utils/sendOtp.js';
 import jwt from 'jsonwebtoken';
 
- // Replace with your secret key
+// Replace with your secret key
 
 
 export const login = async (req, res) => {
@@ -78,11 +78,27 @@ export const verifyOtp = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId: user.id, phone: user.phone, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+
+        res.cookie("userType", user.userType, {
+            secure: false,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+
+        // Send response to frontend
         return res.status(200).json({
-            message: 'OTP verified successfully.',
-            token,
+            message: "OTP verified successfully.",
             user
         });
+
     } catch (error) {
         return res.status(500).json({ message: 'OTP verification failed.', error: error.message });
     }

@@ -4,8 +4,14 @@ interface Slide{
     buttonLink: string
 }
 interface User {
-  id: string;
-  name: string;
+  _id: string;
+  fullName: string | null;
+  email: string | null;
   phone: string;
-  type: "buyer" | "seller"| null;
+  address: string[];          // array of address IDs or strings
+  isAdmin: boolean;
+  userType: "seller" | "customer";
+  createdAt: string;          // ISO date string
+  updatedAt: string;          // ISO date string
+  __v: number;
 }

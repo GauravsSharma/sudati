@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import { useSendOtp, useVerifyOtp } from '@/hooks/useUser';
 import { toast } from 'react-toastify';
 
-export default function LoginModal({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function LoginModal({ isOpen, setIsOpen,becomeASeller }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,becomeASeller:boolean }) {
   //   const [isOpen, setIsOpen] = useState(true);
   const [mobileNumber, setMobileNumber] = useState('');
   const [receiveOffers, setReceiveOffers] = useState(true);
@@ -31,7 +31,7 @@ export default function LoginModal({ isOpen, setIsOpen }: { isOpen: boolean, set
           toast.success("OTP sent!");
         },
         onError: (error) => toast.error(`Failed to send OTP: ${error}`),
-      }
+      } 
     );
   };
 
@@ -40,7 +40,7 @@ export default function LoginModal({ isOpen, setIsOpen }: { isOpen: boolean, set
       {
         phone: "+91" + mobileNumber,
         otp,
-        userType: "customer",
+        userType: becomeASeller ? "seller" : "customer",
       },
       {
         onSuccess: (res) => {

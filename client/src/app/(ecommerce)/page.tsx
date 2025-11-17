@@ -5,7 +5,9 @@ import HeroCarousel from '@/components/carousels/HeroCarousel'
 import { useCurrentUser } from '@/hooks/useUser'
 import { useUserStore } from '@/stores/user.store'
 import Image from 'next/image'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+
+import React, { useEffect } from 'react'
 const category = [
   {
     url: "/home/shirt.avif",
@@ -33,7 +35,15 @@ const category = [
   }
 ]
 const page = () => {
-  const { data: user, isLoading } = useCurrentUser();
+  const {isLoading } = useCurrentUser();
+  const user = useUserStore((s) => s.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && user?.userType === "seller") {
+      router.push("/admin/dashboard");
+    }
+  }, [user, isLoading]);
 
   return (
     <div >

@@ -19,8 +19,10 @@ export const useCurrentUser = () => {
     queryKey: ["current-user"],
     queryFn: async () => {
       const res = await api.get("/user")
-      setUser(res.data);
-      return res.data;
+      setUser(res.data.user);
+      console.log("Data------------>",res.data);
+      
+      return res.data.user;
     },
   });
 };
@@ -37,7 +39,7 @@ export const useSendOtp = () => {
 
 // Verify OTP → return token + user
 export const useVerifyOtp = () => {
-  const setAuth = useUserStore((s) => s.setAuth);
+  const setUser = useUserStore((s) => s.setUser);
 
   return useMutation({
     mutationFn: async (data: VerifyOtpPayload) => {
@@ -45,8 +47,9 @@ export const useVerifyOtp = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      setAuth(data.user, data.token);
+      console.log("logging from useVerifyOtp:" ,data);
+      
+      setUser(data.user);
     },
   });
 };

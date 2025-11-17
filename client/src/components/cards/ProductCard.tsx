@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import Image from 'next/image';
+import { useUserStore } from '@/stores/user.store';
 
 const ProductCard = ({ 
   image = "/home/tshirt.avif",
@@ -15,7 +16,7 @@ const ProductCard = ({
 }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-
+   
   const handleWishlistClick = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsWishlisted(!isWishlisted);

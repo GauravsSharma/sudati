@@ -12,6 +12,7 @@ const EcomNav = () => {
   const [showTopBar, setShowTopBar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [becomeASeller, setBecomeASeller] = useState(false);
   const user = useUserStore((s) => s.user);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -57,16 +58,22 @@ const EcomNav = () => {
             <Link href="/contact_us" className="hover:text-gray-800 transition-colors text-xs font-semibold">
               Contact Us
             </Link>
-            {!user && <span className="text-gray-300">|</span>}
-           {!user && <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
-            onClick={() => setIsOpen(true)}
+            { !user && <span className="text-gray-300">|</span>}
+           {!user &&  <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
+            onClick={() => {setIsOpen(true);setBecomeASeller(false)}}
             >
               Login
+            </button>}
+            { <span className="text-gray-300">|</span>}
+           { <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
+            onClick={() => {setIsOpen(true);setBecomeASeller(true)}}
+            >
+              Become a Seller
             </button>}
           </div>
         </div>
       </div>
-      <LoginModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <LoginModal isOpen={isOpen} setIsOpen={setIsOpen} becomeASeller = {becomeASeller}/>
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">

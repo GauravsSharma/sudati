@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from "dotenv";
-
+import cookieParser from "cookie-parser";
 import userRoutes from './src/routes/user.route.js';
 import storeRoutes from './src/routes/store.route.js';
 import productRoute from './src/routes/product.route.js';
@@ -15,9 +15,14 @@ import Stripe from 'stripe';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",  // specific domain, NOT "*"
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cookieParser());
 // app.use(bodyParser.urlencoded({ extended: true }));
 connectDB()
 
