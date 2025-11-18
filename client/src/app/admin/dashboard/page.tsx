@@ -14,9 +14,11 @@ import {
   Users,
   UserCheck,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  LucideLogOut
 } from 'lucide-react';
 import Image from 'next/image';
+import { useLogout } from '@/hooks/useUser';
 
 // Sample data for orders table
 const ordersData = [
@@ -32,7 +34,7 @@ const columnHelper = createColumnHelper();
 
 const DashboardOverview = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('Today');
-
+  const logout = useLogout();
   // Define columns for the orders table
   const columns = useMemo(
     () => [
@@ -86,9 +88,21 @@ const DashboardOverview = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
+  const handleLogout = () => {
+    // Implement logout functionality here
+    logout.mutate()
+  }
+  
   return (
     <div className="p-6 bg-gray-50 min-h-screen w-full">
+        <div  onClick={handleLogout} className="flex cursor-pointer max-w-40 bg-amber-200 justify-between items-center p-6 border-b border-gray-200">
+              <button
+               
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <LucideLogOut size={24} />
+              </button>
+            </div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Overview</h1>

@@ -15,3 +15,10 @@ interface User {
   updatedAt: string;          // ISO date string
   __v: number;
 }
+interface Store {
+  _id: string;
+  name: string;
+  description: string;
+  address: string;
+
+}

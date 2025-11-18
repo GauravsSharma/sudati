@@ -1,5 +1,5 @@
 import express from 'express';
-import { addAddress, becomeASeller, deleteAddress, getProfile, login, updateAddress, updateOrAddProfile, verifyOtp } from '../controllers/user.controller.js';
+import { addAddress, becomeASeller, deleteAddress, getProfile, login, logout, updateAddress, updateOrAddProfile, verifyOtp } from '../controllers/user.controller.js';
 import { authMiddleware } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -16,6 +16,7 @@ router.post('/address',authMiddleware, addAddress);
 
 // Route to verify OTP and get auth token
 router.post('/verify-otp', verifyOtp);
+router.post('/logout', authMiddleware, logout);
 router.delete('/address/:id', authMiddleware,deleteAddress);
 
 

@@ -1,6 +1,7 @@
 import api from "@/lib/axios";
 import { useUserStore } from "@/stores/user.store";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 interface SendOtpPayload {
   phone: string;
@@ -47,9 +48,23 @@ export const useVerifyOtp = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("logging from useVerifyOtp:" ,data);
-      
       setUser(data.user);
+    },
+  });
+};
+
+// Verify OTP → return token + user
+export const useLogout = () => {
+  const setUser = useUserStore((s) => s.setUser);
+
+  return useMutation({
+    mutationFn: async () => {
+      const res = await api.post("/user/logout");
+      return res.data;
+    },
+    onSuccess: () => {  
+      setUser(null);
+      toast.success("Logout successful!");
     },
   });
 };
