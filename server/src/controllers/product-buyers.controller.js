@@ -11,7 +11,8 @@ export const getProducts = async (req, res) => {
 
     // Fetch primary image for each product
 
-    console.log(req+"request");
+    console.log("Request received:", req);
+
     res.status(200).json(products);
   } catch (error) {
     console.error(error);

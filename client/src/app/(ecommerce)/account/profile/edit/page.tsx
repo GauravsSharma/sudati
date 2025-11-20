@@ -1,36 +1,70 @@
 "use client";
+import { useUpdateOrEditProfile } from "@/hooks/useUser";
+import { useUserStore } from "@/stores/user.store";
+import { useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 
 type FormData = {
   firstName: string;
   lastName: string;
-  alternatePhone: string;
-  dateOfBirth: string;
-  gender: string;
+  email: string;
+  //alternatePhone: string;
+  //dateOfBirth: string;
+  //gender: string;
 };
 
 export default function ProfileEditForm() {
   const [formData, setFormData] = useState<FormData>({
     firstName: "Gaurav",
     lastName: "Sharma",
-    alternatePhone: "",
-    dateOfBirth: "",
-    gender: ""
+    email: "gauravsharma23@gmail.com",
+    //alternatePhone: "",
+    //dateOfBirth: "",
+    //gender: ""
   });
+
+  const queryClient = useQueryClient();
+  const updateProfile = useUpdateOrEditProfile();
+  const setUser = useUserStore((s) => s.setUser); // moved to top-level
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleGenderChange = (gender: string) => {
+  /* const handleGenderChange = (gender: string) => {
     setFormData(prev => ({
       ...prev,
       gender
     }));
+  }; */
+
+  // use of arrow function-call when save button is clicked
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    console.log("Submitting form");
+    console.log(formData.firstName);
+    console.log(formData.lastName);
+    console.log(formData.email);
+
+    updateProfile.mutate(
+      {
+        name: formData.firstName + " " + formData.lastName, // added space between names
+        email: formData.email,
+      },
+      {
+        onSuccess: (data) => {
+          console.log("Profile updated:", data);
+          setUser(data.user); // update Zustand store
+        },
+        onError: (error) =>
+          console.error(`Failed to update profile: ${error}`),
+      }
+    );
   };
 
   return (
@@ -74,14 +108,13 @@ export default function ProfileEditForm() {
             </label>
             <input
               type="email"
-              value="gauravsharma16072001@gmail.com"
-              disabled
+              value={formData.email}
               className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
             />
           </div>
 
           {/* Phone Number */}
-          <div>
+          {/*<div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
               PHONE NUMBER
             </label>
@@ -91,10 +124,10 @@ export default function ProfileEditForm() {
               disabled
               className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
             />
-          </div>
+          </div>*/}
 
           {/* Alternate Phone Number */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
               ALTERNATE PHONE NUMBER
             </label>
@@ -106,10 +139,10 @@ export default function ProfileEditForm() {
               placeholder="+91 Enter your alternate mobile number"
               className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent placeholder-gray-400"
             />
-          </div>
+          </div>*/}
 
           {/* Date of Birth */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
               DATE OF BIRTH (DD-MM-YYYY)
             </label>
@@ -121,10 +154,10 @@ export default function ProfileEditForm() {
               placeholder="dd-mm-yyyy"
               className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent placeholder-gray-400"
             />
-          </div>
+          </div>*/}
 
           {/* Gender */}
-          <div>
+          {/*<div>
             <label className="block text-sm font-medium text-gray-600 mb-4">
               GENDER
             </label>
@@ -143,7 +176,7 @@ export default function ProfileEditForm() {
                 </label>
               ))}
             </div>
-          </div>
+          </div>*/}
         </div>
       </div>
 
@@ -152,7 +185,10 @@ export default function ProfileEditForm() {
         <button className="px-8 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors">
           CANCEL
         </button>
-        <button className="px-8 py-3 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 transition-colors">
+        <button
+          className="px-8 py-3 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 transition-colors"
+          onClick={handleSubmit}
+        >
           SAVE
         </button>
       </div>

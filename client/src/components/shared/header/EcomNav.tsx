@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
-import Image from "next/image";
 import LoginModal from "@/components/models/LoginModel";
 import { useUserStore } from "@/stores/user.store";
+import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+
+
+
+
+
+
 
 const EcomNav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,10 +20,17 @@ const EcomNav = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [becomeASeller, setBecomeASeller] = useState(false);
+  const [searchTerm,setSearchTerm]=useState('');
   const user = useUserStore((s) => s.user);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+
+ 
+
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -150,7 +164,9 @@ const EcomNav = () => {
               type="text"
               placeholder="Search for products"
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400"
-            />
+              onChange={(e) => setSearchTerm(e.target.value)}
+           
+           />
           </div>
         </div>
       </div>

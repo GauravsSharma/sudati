@@ -2,6 +2,7 @@ import api from "@/lib/axios";
 
 
 import { useUserStore } from "@/stores/user.store";
+import { User } from "@/type";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 // ------------------------
@@ -35,7 +36,7 @@ interface VerifyOtpPayload {
 export const useCurrentUser = () => {
   // Explicitly type 's' to UserState
   const setUser = useUserStore((s: UserState) => s.setUser);
-
+ 
   return useQuery<User>({
     queryKey: ["current-user"],
     queryFn: async () => {
@@ -80,4 +81,16 @@ export const useVerifyOtp = () => {
       setUser(data.user);
     },
   });
+};
+
+
+// Get user Profile -> return user profile
+export const getProfile = () => {
+
+   const setUser = useUserStore((s) => s.setUser);
+   
+
+
+
+
 };

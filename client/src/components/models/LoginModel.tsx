@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
 import { useSendOtp, useVerifyOtp } from '@/hooks/useUser';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 export default function LoginModal({ isOpen, setIsOpen,becomeASeller }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,becomeASeller:boolean }) {
@@ -22,6 +22,8 @@ export default function LoginModal({ isOpen, setIsOpen,becomeASeller }: { isOpen
       toast.error("Enter valid number");
       return;
     }
+     
+    console.log(mobileNumber+""+mobileNumber);
 
     sendOtpMutation.mutate(
       { phone: "+91" + mobileNumber },

@@ -13,6 +13,7 @@ export default function page() {
 
   const handleEdit = () => {
     console.log("Edit address clicked");
+    alert("edit")
   };
 
   const handleRemove = () => {
