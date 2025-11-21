@@ -1,7 +1,28 @@
+
+"use client"
+
+
+import { useCurrentUser } from "@/hooks/useUser";
 import Link from "next/link";
 
 export default function page() {
-  return (
+  
+  
+   // in this basically we have to add show logged-user details...
+  
+  
+     
+     const{data:user,isLoading,error}=useCurrentUser();
+     
+
+      
+     if(isLoading)
+      return <p>Loading.....</p>
+  
+     if(error)
+      return <p>Something went wrong.....</p>
+  
+   return (
     <div className=" p-6 bg-white">
       {/* Header */}
       <div className="mb-8">
@@ -19,7 +40,7 @@ export default function page() {
             FULL NAME
           </label>
           <div className="text-lg font-medium text-gray-900">
-            Gaurav Sharma
+             {user?.fullName}
           </div>
         </div>
 
@@ -29,7 +50,7 @@ export default function page() {
             EMAIL
           </label>
           <div className="text-lg font-medium text-gray-900">
-            gauravsharma16072001@gmail.com
+             {user?.email}
           </div>
         </div>
 
@@ -39,39 +60,38 @@ export default function page() {
             PHONE NUMBER
           </label>
           <div className="text-lg font-medium text-gray-900">
-            +91 9389152789
+            {user?.phone}
           </div>
         </div>
 
         {/* Alternate Phone Number */}
-        <div>
+      {/* <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
             ALTERNATE PHONE NUMBER
           </label>
           <div className="text-lg font-medium text-gray-900">
-            {/* Empty field */}
+           
           </div>
-        </div>
+        </div>*/}
 
-        {/* Date of Birth */}
+        {/* Date of Birth 
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
             DATE OF BIRTH
           </label>
           <div className="text-lg font-medium text-gray-900">
-            {/* Empty field */}
+         
           </div>
-        </div>
+        </div>*/}
 
         {/* Gender */}
-        <div>
+        {/*<div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
             GENDER
           </label>
           <div className="text-lg font-medium text-gray-900">
-            {/* Empty field */}
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {/* Edit Profile Button */}

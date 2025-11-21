@@ -2,6 +2,7 @@
 
 import { useUpdateOrEditProfile } from "@/hooks/useUser";
 import { useUserStore } from "@/stores/user.store";
+import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 
 type FormData = {
@@ -15,9 +16,9 @@ type FormData = {
 
 export default function ProfileEditForm() {
   const [formData, setFormData] = useState<FormData>({
-    firstName: "Gaurav",
-    lastName: "Sharma",
-    email: "gauravsharma23@gmail.com",
+    firstName: "Barbara",
+    lastName: "Millicent",
+    email: "BarbaraMillicent23@gmail.com",
     //alternatePhone: "",
     //dateOfBirth: "",
     //gender: ""
@@ -184,9 +185,11 @@ export default function ProfileEditForm() {
 
       {/* Buttons */}
       <div className="flex space-x-4">
-        <button className="px-8 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors">
+       
+
+         <Link href={"/account"} className="px-8 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors">
           CANCEL
-        </button>
+        </Link>
         <button
           className="px-8 py-3 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 transition-colors"
           onClick={handleSubmit}
