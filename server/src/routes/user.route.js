@@ -1,10 +1,11 @@
 import express from 'express';
-import { addAddress, becomeASeller, deleteAddress, getProfile, login, logout, updateAddress, updateOrAddProfile, verifyOtp } from '../controllers/user.controller.js';
+import { addAddress, becomeASeller, deleteAddress, getAddresses, getProfile, login, logout, updateAddress, updateOrAddProfile, verifyOtp } from '../controllers/user.controller.js';
 import { authMiddleware } from '../middlewares/auth.js';
 
 const router = express.Router();
 
 router.get("/",authMiddleware,getProfile)
+router.get("/address",authMiddleware,getAddresses)
 
 router.put("/profile",authMiddleware,updateOrAddProfile)
 router.put("/address/:id",authMiddleware,updateAddress)

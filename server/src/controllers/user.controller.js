@@ -171,6 +171,15 @@ export const updateOrAddProfile = async (req, res) => {
         return res.status(500).json({ success: false, message: `Internal server error: ${error}` });
     }
 }
+export const getAddresses = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const addresses = await Address.find({ userId });
+        return res.status(200).json({ addresses });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: `Internal server error: ${error}` });
+    }
+}
 export const addAddress = async (req, res) => {
     try {
         const { landmark, address1, address2 = "", state, city, pincode } = req.body;
