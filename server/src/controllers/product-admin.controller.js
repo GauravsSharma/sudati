@@ -5,6 +5,7 @@ import ProductVariant from '../models/productVariants.js';
 import Store from '../models/store.js';
 import mongoose from 'mongoose';
 import cloudinary from '../config/cloudinary.js';
+import { getDiscountPercentage } from '../utils/helper.js';
 
 // 06-11-25 test this api and create add prodcut as a variant api
 
@@ -24,7 +25,8 @@ export const createProduct = async (req, res) => {
       storeId,
       stock,
       color,
-      price
+      price,
+      originalPrice
     } = req.body;
     const user = req.user;
 
@@ -37,13 +39,13 @@ export const createProduct = async (req, res) => {
       await session.abortTransaction();
       return res.status(403).json({ message: 'Not authorized to add products to this store.' });
     }
-
+    const discountPercentage = getDiscountPercentage(originalPrice, price);
     // Generate slug if not provided
     const slugValue = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     // Create Product
     const newProduct = await Product.create(
-      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price }],
+      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price,originalPrice,discountPercentage }],
       { session }
     );
 
@@ -120,9 +122,9 @@ export const uploadMedia = async (req, res) => {
         url: result.secure_url,
         public_id: result.public_id,
         altText: meta_data[i].altText || "",
-        isPrimary: meta_data[i].isPrimary || false,
+        isPrimary: meta_data[i].type==="front",
       });
-      if (meta_data[i].isPrimary) {
+      if (meta_data[i].type === "front") {
         thumbnail.url = result.secure_url
         thumbnail.public_id = result.public_id
       }
@@ -146,25 +148,31 @@ export const uploadMedia = async (req, res) => {
 
 export const getStoreProducts = async (req, res) => {
   try {
-    const { storeId } = req.query;
+    const { storeId } = req.params;
 
     // If storeId is provided, verify store exists
-    if (storeId) {
-      const store = await Store.findById(storeId);
+    if (!storeId) {
+      return res.status(404).json({
+          success: false,
+          message: 'StoreId not found'
+        });
+    }
+     const store = await Store.findById(storeId);
       if (!store) {
         return res.status(404).json({
           success: false,
           message: 'Store not found'
         });
       }
-
-      // Get products for specific store
-      const storeProducts = await Product.find({ storeId }) // filter by storeId
-        .sort({ createdAt: -1 }) // descending order
-        .limit(10)               // limit to 10 documents
-        .populate({
-          path: 'tags',        // the field in Product that references Tag  // optional: select only fields you want
+      if(store.ownerId.toString() !== req.user.userId.toString()){
+        return res.status(401).json({
+          success: false,
+          message: 'You are not authorized to view products of this store.'
         });
+      }
+      const storeProducts = await Product.find({ storeId }) 
+        .limit(10)               
+        .select('title price thumbnail stock _id isActive');
 
       console.log(storeProducts);
 
@@ -179,7 +187,6 @@ export const getStoreProducts = async (req, res) => {
         count: storeProducts.length,
         products: storeProducts
       });
-    }
   } catch (error) {
     return res.status(500).json({
       message: 'Failed to fetch products',
@@ -281,6 +288,7 @@ export const deleteProduct = async (req, res) => {
       await cloudinary.uploader.destroy(image.public_id);
       await image.deleteOne();
     }
+    
     const productsVariants = product.variants;
     
     for (let productVariant of productsVariants) {

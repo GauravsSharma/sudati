@@ -9,7 +9,9 @@ import {
   Users, 
   Megaphone, 
   TrendingUp, 
-  Settings 
+  Settings, 
+  HomeIcon,
+  Building2
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,11 +21,11 @@ const AdminSidebar = () => {
 
   const menuItems = [
     { icon: BarChart3, label: 'Overview', count: '24+', url: "/admin/dashboard" },
+    { icon: Building2, label: 'Stores', url: "/admin/stores" },
     { icon: ShoppingCart, label: 'Orders', url: "/admin/orders" },
     { icon: Package, label: 'Products', url: "/admin/products" },
     { icon: Users, label: 'Customers', url: "/admin/customers" },
-    { icon: Megaphone, label: 'Marketing', url: "/admin/marketing" },
-    { icon: TrendingUp, label: 'Analytics', url: "/admin/analytics" },
+    // { icon: Megaphone, label: 'Marketing', url: "/admin/marketing" },
   ];
 
   return (

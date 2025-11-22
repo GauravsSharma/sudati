@@ -15,7 +15,7 @@ export const createStore = async (req, res) => {
             name,
             description,
             address,
-        });
+        }).select("name description address _id")
 
         return res
             .status(201)
@@ -32,9 +32,12 @@ export const getStores = async (req, res) => {
     try {
         const ownerId = req.user.userId; // from your auth middleware
 
-        const stores = await Store.find({ ownerId });
+        const stores = await Store.find({ ownerId }).select("name description address _id");
 
-        return res.status(200).json(stores);
+        return res.status(200).json({
+            success: true,
+            stores,
+        });
     } catch (error) {
         return res
             .status(500)

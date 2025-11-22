@@ -18,6 +18,7 @@ const layout = ({
       <NewsletterSubscription />
       <EcomFooter />
     </QueryProvider>
+
   )
 }
 

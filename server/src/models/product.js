@@ -86,13 +86,17 @@ const productSchema = new mongoose.Schema(
     
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     color:{
       type: String,
       default: '',
     },
     price: {
+      type: Number,
+      require:true
+    },
+    originalPrice: {
       type: Number,
       require:true
     },
