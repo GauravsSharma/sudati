@@ -35,6 +35,16 @@ interface UserDetails{
    email:string
 }
 
+interface Address {
+  landmark: string;
+  state: string;
+  city: string;
+  address1: string;
+  address2?: string; // optional
+  pincode: string;
+}
+
+
 // ------------------------
 // GET current user
 // ------------------------
@@ -104,6 +114,21 @@ export const useUpdateOrEditProfile = () =>{
 
 }
 
+
+export const addAddress = () =>{
+
+     
+    return useMutation({
+ 
+      mutationFn:async(data:Address) =>{
+
+       const res=await api.post("/user/address",data);
+       return res.data;
+
+
+      }
+   
+});}
 
 
 

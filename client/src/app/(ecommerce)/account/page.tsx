@@ -8,17 +8,18 @@ import Link from "next/link";
 export default function page() {
   
   
-   // in this basically we have to add show logged-user details...
+   // in this basically we have to show logged-user details...
   
   
      
      const{data:user,isLoading,error}=useCurrentUser();
      
 
-      
+      // if user loads
      if(isLoading)
       return <p>Loading.....</p>
   
+     // if user is null.......
      if(error)
       return <p>Something went wrong.....</p>
   

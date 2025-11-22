@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { addAddress } from '@/hooks/useUser';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { X } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const addressSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  mobileNumber: z.string().min(10, 'Valid mobile number is required'),
+ 
+
   postCode: z.string().min(1, 'Post code is required'),
   state: z.string().min(1, 'State is required'),
   cityTown: z.string().min(1, 'City/Town is required'),
   address1: z.string().min(1, 'Address is required'),
-  address2: z.string().min(1, 'Area details are required'),
   landmark: z.string().min(1, 'Landmark is required'),
-  instructions: z.string().optional(),
-  addressType: z.enum(['home', 'office']),
   makeDefault: z.boolean().optional()
 });
 
 type AddressFormData = z.infer<typeof addressSchema>;
+
 
 export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean, setIsOpen: (open: boolean) => void   }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -33,7 +31,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
   } = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
-      addressType: 'home',
+
       makeDefault: false
     }
   });
@@ -42,7 +40,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
     let fieldsToValidate: (keyof AddressFormData)[] = [];
     
     if (currentStep === 1) {
-      fieldsToValidate = ['firstName', 'lastName', 'mobileNumber', 'postCode', 'state', 'cityTown'];
+      fieldsToValidate = [ 'postCode', 'state', 'cityTown'];
     }
     
     const isValid = await trigger(fieldsToValidate);
@@ -55,9 +53,43 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
     setCurrentStep(1);
   };
 
+
+
+  const address= addAddress();
+
+
+
   const onSubmit = (data: AddressFormData) => {
     console.log('Form submitted:', data);
     // Handle form submission here
+      
+
+ 
+      address.mutate(
+      {
+
+             landmark:data.landmark,
+             state:data.state,
+             city:data.cityTown,
+             address1:data.address1,
+             pincode:data.postCode
+
+
+      },
+      {
+        onSuccess: (data) => {
+          console.log("Address added", data);
+         // setUser(data.user); // update Zustand store
+        },
+        onError: (error) =>
+          console.error(`Failed to address: ${error}`),
+      }
+    );
+
+
+
+
+
     setIsOpen(false);
   };
 
@@ -79,7 +111,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
         <div className="p-6">
           {currentStep === 1 && (
             <div className="space-y-4">
-              {/* First Name */}
+              {/* First Name 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   FIRST NAME <span className="text-red-500">*</span>
@@ -93,9 +125,9 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                 {errors.firstName && (
                   <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
                 )}
-              </div>
+              </div>*/}
 
-              {/* Last Name */}
+              {/* Last Name 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   LAST NAME <span className="text-red-500">*</span>
@@ -109,9 +141,9 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                 {errors.lastName && (
                   <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
                 )}
-              </div>
+              </div>*/}
 
-              {/* Mobile Number and Post Code */}
+              {/* Mobile Number and Post Code 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -130,7 +162,10 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                     <p className="text-red-500 text-xs mt-1">{errors.mobileNumber.message}</p>
                   )}
                 </div>
-                <div>
+                <div>*/}
+                 <div className="grid grid-cols-2 gap-4">
+                  <div>
+                 
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     POST CODE <span className="text-red-500">*</span>
                   </label>
@@ -209,7 +244,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                 )}
               </div>
 
-              {/* Address 2 */}
+              {/* Address 2 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   ADDRESS 2 (AREA, COLONY, STREET, SECTOR, VILLAGE) <span className="text-red-500">*</span>
@@ -223,7 +258,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                 {errors.address2 && (
                   <p className="text-red-500 text-xs mt-1">{errors.address2.message}</p>
                 )}
-              </div>
+              </div>*}
 
               {/* Landmark */}
               <div>
@@ -241,7 +276,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                 )}
               </div>
 
-              {/* Instructions */}
+              {/* Instructions 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Instructions (Optional)
@@ -252,9 +287,9 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
                 />
-              </div>
+              </div>*}
 
-              {/* Address Type */}
+              {/* Address Type 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   ADDRESS TYPE
@@ -279,7 +314,7 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
                     <span className="ml-2 text-sm text-gray-700">Office/Commercial</span>
                   </label>
                 </div>
-              </div>
+              </div>*}
 
               {/* Make Default */}
               <div className="flex items-center">
