@@ -13,7 +13,7 @@ router.get('/search', searchProducts);
 router.get('/:id', getProductById);
 
 //seller routes
-router.get('/store',sellerMiddleware, getStoreProducts);
+router.get('/store/:storeId',sellerMiddleware, getStoreProducts);
 router.post('/', sellerMiddleware, createProduct);
 router.post("/upload/:productId",sellerMiddleware,upload.array("images", 5), uploadMedia);
 router.post('/variants',sellerMiddleware, addVariant);

@@ -22,3 +22,21 @@ interface Store {
   address: string;
 
 }
+interface Product{
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  thumbnail: string;
+}
+interface SellerProduct{
+  _id: string;
+  title: string;
+  isActive: boolean;
+  stock: number;
+  price: number;
+  thumbnail: {
+    public_id: string;
+    url: string;
+  };
+}

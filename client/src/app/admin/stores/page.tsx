@@ -27,13 +27,13 @@ const StoresPage = () => {
   //     location: 'San Francisco, CA'
   //   }
   // ]);
-  const {isLoading} = useGetAllStores()
+  
   const stores = useSellerStore((s) => s.stores);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   console.log(stores);
-  if(isLoading){
-    return <div>Loading...</div>
-  }
+  // if(isLoading){
+  //   return <div>Loading...</div>
+  // }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -78,7 +78,7 @@ const StoresPage = () => {
         </div>
 
         {/* Empty State */}
-        {/* {stores.length === 0 && (
+        {!stores && (
           <div className="text-center py-20">
             <Store className="mx-auto text-gray-400 mb-4" size={64} />
             <h3 className="text-2xl font-semibold text-gray-900 mb-2">No stores yet</h3>
@@ -91,7 +91,7 @@ const StoresPage = () => {
               Add New Store
             </button>
           </div>
-        )} */}
+        )}
       </div>
 
       {/* Dialog */}
