@@ -1,8 +1,5 @@
-import api from "@/lib/axios";
 
 
-import { useUserStore } from "@/stores/user.store";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 // ------------------------
 // Define User type
@@ -53,3 +50,16 @@ interface SellerProduct{
     url: string;
   };
 }
+
+
+//type for address
+export interface Address {
+  
+  address1: string
+  landmark?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  
+}
+
