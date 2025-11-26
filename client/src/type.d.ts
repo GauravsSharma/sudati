@@ -1,11 +1,3 @@
-
-
-
-// ------------------------
-// Define User type
-// Make sure this matches the API response exactly
-// ------------------------
-
 interface User {
   id: string;
   name: string;
@@ -63,13 +55,11 @@ interface BaseProduct{
 
 
 //type for address
-export interface Address {
-  
+interface Address {
   address1: string
   landmark?: string;
   city: string;
   state: string;
-  pincode: string;
-  
+  pincode: string;  
 }
 

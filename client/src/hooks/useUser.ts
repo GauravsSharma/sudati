@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 
 // import { useUserStore } from "@/stores/user.store";
-import { Address, User } from "@/type";
+
 // import { useMutation, useQuery } from "@tanstack/react-query";
 
 // ------------------------
