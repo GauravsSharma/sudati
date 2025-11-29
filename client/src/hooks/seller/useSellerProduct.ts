@@ -11,7 +11,7 @@ interface ProductDataPayload {
     fabric: string,
     work: string,
     type: string,
-    storeId: string,
+    parentId: string,
     stock: number,
     color: string,
     price: number,

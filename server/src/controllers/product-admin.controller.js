@@ -23,7 +23,6 @@ export const createProduct = async (req, res) => {
       work,
       type,
       tags = [],
-      storeId,
       stock,
       color,
       price,
@@ -32,12 +31,12 @@ export const createProduct = async (req, res) => {
     } = req.body;
     const user = req.user;
 
-    const store = await Store.findById(storeId).session(session);
-    if (!store) {
+    const parent = await ParentProduct.findById(parentId).populate("storeId").session(session);
+    if (!parent) {
       await session.abortTransaction();
-      return res.status(404).json({ message: 'Store not found.' });
+      return res.status(404).json({ message: 'Parent not found.' });
     }
-    if (store.ownerId.toString() !== user.userId.toString()) {
+    if (parent.storeId.ownerId.toString() !== user.userId.toString()) {
       await session.abortTransaction();
       return res.status(403).json({ message: 'Not authorized to add products to this store.' });
     }
@@ -48,7 +47,7 @@ export const createProduct = async (req, res) => {
 
     // Create Product
     const newProduct = await Product.create(
-      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price,originalPrice,discountPercentage,parentId }],
+      [{ title, description, slug: slugValue, fabric, work, type, stock, color, price,originalPrice,discountPercentage,parentId }],
       { session }
     );
 
@@ -68,16 +67,15 @@ export const createProduct = async (req, res) => {
     );
 
     // Link variant and tags to product
+    parent.varients.push(newProduct[0]._id)
     newProduct[0].tags = tagIds;
-
     await newProduct[0].save({ session });
+    await parent.save()
 
     await session.commitTransaction();
-
     const productWithRelations = await Product.findById(newProduct[0]._id)
       .populate('tags')
-      .populate('storeId')
-
+   
     return res.status(201).json({
       message: 'Product created successfully.',
       product: productWithRelations,
@@ -274,14 +272,16 @@ export const deleteProduct = async (req, res) => {
         message: 'Product id not found'
       });
     }
-    const product = await Product.findById(productId).populate("storeId images variants")
+    const product = await Product.findById(productId).populate("images")
     if (!product) {
       return res.status(400).json({
         success: false,
         message: 'Product not found'
       });
     }
-    if (product.storeId.ownerId.toString() !== userId.toString()) {
+    const parent = await ParentProduct.findById(product.parentId).populate("storeId")
+    console.log(parent)
+    if (parent.storeId.ownerId.toString() !== userId.toString()) {
       return res.status(401).json({
         success: false,
         message: 'You are not authorized to delete this product.'
@@ -292,22 +292,11 @@ export const deleteProduct = async (req, res) => {
       await cloudinary.uploader.destroy(image.public_id);
       await image.deleteOne();
     }
-    
-    const productsVariants = product.variants;
-    
-    for (let productVariant of productsVariants) {
-      const product = await Product.findById(productVariant.productId).populate("variants");
-      const idx = product.variants.findIndex(async(v) => {
-        if(v.productId.toString() === productId.toString()){
-          await v.deleteOne();
-          return true;
-        }
-      })
-      if (idx !== -1) {
-        product.variants.splice(idx, 1);
-        await product.save();
-      }
+    const idx = parent.varients.map((v)=>v.toString()===productId);
+    if(idx!==-1){
+      parent.varients.splice(idx,1);
     }
+    await parent.save();
     await product.deleteOne();
     return res.status(200).json({
       success: true,

@@ -9,37 +9,39 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown, ChevronRight, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import AddBaseProductModel from '../models/AddBaseProductModel';
+import DeleteProductDialog from '../models/DeleteProduct';
+import AddProductModal from '../models/AddProductModel';
+import ProductImageDialog from '../models/AddImages';
 
-// interface Variant {
-//   id: string;
-//   name: string;
-//   sku: string;
-//   price: number;
-//   stock: number;
-//   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
-//   image: string;
-//   color: string;
-// }
-
-// interface ParentProduct {
-//   id: string;
-//   name: string;
-//   sku: string;
-//   isParent: true;
-//   varients: Variant[];
-// }
 
 type TableRow = BaseProduct | (SellerProduct & { isParent?: false; parentId: string });
 
 const SareeProductTable = ({
   data
-}:{
-  data:BaseProduct[]
+}: {
+  data: BaseProduct[]
 }) => {
-  console.log(data , "from table");
-  
+  console.log(data, "from table");
+
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [isDeleteModelOpen, setIsDeleteModelOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<SellerProduct>();
+  const [selectedBaseProductId, setSelectedBaseProductId] = useState<string>();
   const [showAddBaseProductDialog, setShowAddBaseProductDialog] = useState(false);
+  const [showAddVariantModel, setShowAddVariantModel] = useState(false);
+  const [showAddImagesModel, setShowAddImagesModel] = useState(false);
+  const [createdProductId, setCreatedProductId] = useState<string>()
+  // pagination (pageIndex is 0-based)
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize] = useState(2); // show 2 parent products per page
+
+  const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+
+  const paginatedData = useMemo(() => {
+    const start = pageIndex * pageSize;
+    return data.slice(start, start + pageSize);
+  }, [data, pageIndex, pageSize]);
+
   const toggleMenu = (variantId: string) => {
     setOpenMenuId(openMenuId === variantId ? null : variantId);
   };
@@ -49,28 +51,23 @@ const SareeProductTable = ({
     setOpenMenuId(null);
   };
 
-  const handleDelete = (variantId: string) => {
-    console.log('Delete variant:', variantId);
+  const handleDelete = (variant: SellerProduct) => {
+    setSelectedProduct(variant)
+    setIsDeleteModelOpen(true)
     setOpenMenuId(null);
   };
 
   const handleAddVariant = (parentId: string) => {
     console.log('Add variant to parent:', parentId);
+    setSelectedBaseProductId(parentId)
+    setShowAddVariantModel(true);
   };
 
-
-
   const getStatusColor = (status: boolean) => {
-    return 'bg-green-100 text-green-800';
-    // switch (status) {
-    //   case 'In Stock':
-    //     case 'Low Stock':
-    //     return 'bg-yellow-100 text-yellow-800';
-    //   case 'Out of Stock':
-    //     return 'bg-red-100 text-red-800';
-    //   default:
-    //     return 'bg-gray-100 text-gray-800';
-    // }
+    if (status) {
+      return 'bg-green-100 text-green-800';
+    }
+    return 'bg-red-100 text-red-800';
   };
 
   const columns = useMemo<ColumnDef<TableRow>[]>(
@@ -116,7 +113,7 @@ const SareeProductTable = ({
               <div className="flex items-center gap-3">
                 <span className="text-gray-400 text-sm">└─</span>
                 <img
-                  src={ variant.thumbnail.url}
+                  src={variant.thumbnail?.url || "https://sudathi.com/cdn/shop/files/4292S921_4.jpg?v=1756404457&width=750"}
                   alt={variant.title}
                   className="w-12 h-12 rounded object-cover border border-gray-200"
                 />
@@ -181,7 +178,7 @@ const SareeProductTable = ({
                 variant.isActive
               )}`}
             >
-              {variant.isActive?"In stock":"Out of stock"}
+              {variant.isActive ? "Active" : "In Active"}
             </span>
           );
         }
@@ -227,7 +224,7 @@ const SareeProductTable = ({
                       Edit Product
                     </button>
                     <button
-                      onClick={() => handleDelete(variant._id)}
+                      onClick={() => handleDelete(variant)}
                       className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                     >
                       <Trash2 size={16} />
@@ -237,7 +234,7 @@ const SareeProductTable = ({
                 </>
               )}
             </div>
-          );
+          )
         }
       }
     ],
@@ -245,7 +242,7 @@ const SareeProductTable = ({
   );
 
   const table = useReactTable({
-    data,
+    data: paginatedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -287,16 +284,15 @@ const SareeProductTable = ({
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                          header.id === 'expander' ? 'w-12' : ''
-                        }`}
+                        className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${header.id === 'expander' ? 'w-12' : ''
+                          }`}
                       >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </th>
                     ))}
                   </tr>
@@ -308,11 +304,10 @@ const SareeProductTable = ({
                   return (
                     <tr
                       key={row.id}
-                      className={`${
-                        isParent
-                          ? 'bg-purple-50 hover:bg-purple-100'
-                          : 'hover:bg-gray-50'
-                      } transition-colors`}
+                      className={`${isParent
+                        ? 'bg-purple-50 hover:bg-purple-100'
+                        : 'hover:bg-gray-50'
+                        } transition-colors`}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-6 py-4">
@@ -327,14 +322,46 @@ const SareeProductTable = ({
                 })}
               </tbody>
             </table>
+            {/* pagination controls */}
+            <div className=" mt-4 p-5">
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                  disabled={pageIndex === 0}
+                  className={`px-3 py-1 rounded ${pageIndex === 0 ? 'bg-gray-200 cursor-not-allowed' : 'bg-purple-600 text-white'} cursor-pointer`}
+                >
+                  Previous
+                </button>
+
+                <button
+                  onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={pageIndex >= totalPages - 1}
+                  className={`px-3 py-1 rounded ${pageIndex >= totalPages - 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-purple-600 text-white'} cursor-pointer`}
+                >
+                  Next
+                </button>
+              </div>
+
+              <div className="text-sm mt-4 text-center text-gray-700">
+                Page {pageIndex + 1} of {totalPages}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
       {/* Add Base Product Dialog */}
       {showAddBaseProductDialog && (
-        <AddBaseProductModel setShowAddBaseProductDialog={setShowAddBaseProductDialog}/>
+        <AddBaseProductModel setShowAddBaseProductDialog={setShowAddBaseProductDialog} />
       )}
+      {selectedProduct && isDeleteModelOpen && <DeleteProductDialog isOpen={isDeleteModelOpen} setIsOpen={setIsDeleteModelOpen} productId={selectedProduct._id} productName={selectedProduct?.title} />}
+      {
+        selectedBaseProductId && showAddVariantModel && <AddProductModal isOpen={showAddVariantModel} setIsOpen={setShowAddVariantModel} setCreatedProductId={setCreatedProductId} parentId={selectedBaseProductId} setImageOpenModel={setShowAddImagesModel} />
+      }
+      {
+        createdProductId && showAddImagesModel && <ProductImageDialog isOpen={showAddImagesModel} setIsOpen={setShowAddImagesModel} productId={createdProductId} />
+      }
     </div>
   );
 };

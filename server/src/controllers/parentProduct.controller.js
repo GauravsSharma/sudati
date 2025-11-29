@@ -31,6 +31,8 @@ export const getParentProducts = async (req, res) => {
             path: "varients",
             select: "_id title thumbnail price status stock slug isActive"
         })
+        console.log(parentProducts);
+        
         res.status(200).json({
             success: true,
             parentProducts,
