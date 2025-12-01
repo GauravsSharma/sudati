@@ -27,9 +27,13 @@ interface Store {
 interface Product{
   _id: string;
   title: string;
-  description: string;
   price: number;
-  thumbnail: string;
+  originalPrice:number,
+  discountPercentage:number
+  thumbnail: {
+    url:string,
+    public_id:string
+  };
 }
 
 interface SellerProduct{
@@ -63,3 +67,24 @@ interface Address {
   pincode: string;  
 }
 
+interface MainProduct{
+  title:string,
+  price:number,
+  originalPrice:number,
+  discountPercentage:number,
+  description:string,
+  images:[
+    {
+      url:string,
+      public_id:string
+    }
+  ]
+}
+interface Variant{
+  thumbnail:{
+    url:string,
+    public_id:string
+  },
+  color:string,
+  _id:string
+}

@@ -6,7 +6,7 @@ export const getProducts = async (req, res) => {
     const products = await Product.find({
       isActive: true,
     })
-      .select("title price description price thumbnail")
+      .select("title price thumbnail originalPrice discountPercentage")
       .limit(10)
 
     // Fetch primary image for each product
@@ -32,9 +32,15 @@ export const getProductById = async (req, res) => {
 
     console.log(req + "request");
     const product = await Product.findById(id)
-      .populate('tags')
-      .populate('storeId')
-      .populate('images');
+      .populate({
+        path: "tags",
+        select: "name slug"   // choose whatever fields you need
+      })
+      .populate({
+        path: "images",
+        select: "url public_id"
+      });
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
 
