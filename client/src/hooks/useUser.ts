@@ -26,8 +26,21 @@ interface UserDetails{
    email:string
 }
 
+//AddressResponse-picture of address 
 export interface AddressResponse {
   addresses: Address[];
+}
+
+//edit address type
+export interface AddressEdit{
+  
+  id:string,
+  address1: string
+  landmark?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  
 }
 
 
@@ -120,8 +133,7 @@ export const getAddress = () => {
 
     
  
- 
-  return useQuery<AddressResponse>({
+ return useQuery<AddressResponse>({
     queryKey: ["Address"],
     queryFn: async () => {
       const res = await api.get("/user/address")
@@ -138,6 +150,54 @@ export const getAddress = () => {
 
 
 };
+
+
+
+//delete the address
+
+
+export const deleteAddress = () =>{
+
+const setUser = useUserStore((s: UserState) => s.setUser);
+
+
+     return useMutation({
+ 
+      mutationFn:async(id:string) =>{
+
+       const res=await api.delete(`/user/address/${id}`);
+       return res.data;
+
+
+      }
+   
+});
+
+
+}
+
+//edit the address
+
+export const useEditAddress = () => {
+  return useMutation({
+    mutationFn: async (data: AddressEdit) => {
+      const res = await api.put(`/address/${data.id}`, data);
+      return res.data;
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
