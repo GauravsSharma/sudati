@@ -2,34 +2,77 @@ import Product from "../models/product.js";
 import UserReview from "../models/productReview.js";
 
 
-export const getReviewsByProductId = async(req,res)=>{
-    try {
-        const {id} = req.params;
+export const getReviewsByProductId = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-        if(!id){
-            return res.status(400).json({
-                success: false,
-                message: "Missing product id."
-            })
-        }
-        const all_reviews = await UserReview.find({productId:id}).limit(5)
-        if(!all_reviews){
-             return res.status(400).json({
-                success: false,
-                message: "No reviews found"
-            })
-        }
-         return res.status(200).json({
-                success: true,
-                all_reviews
-            })
-    } catch (error) {
-         return res.status(500).json({
-            success: false,
-            message: `Internal server error: ${error}`
-        })
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing product id."
+      });
     }
-}
+
+    // Fetch all reviews for calculations
+    const allReviews = await UserReview.find({ productId: id }).select("rating");
+
+    if (!allReviews || allReviews.length === 0) {
+      return res.status(200).json({
+        success: true,
+        all_reviews: [],
+        totalReviews: 0,
+        averageRating: 0,
+        ratingBreakdown: {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0
+        }
+      });
+    }
+
+    // Fetch only last 5 reviews for UI
+    const all_reviews = await UserReview.find({ productId: id })
+      .select("_id review rating userId createdAt")
+      .populate({
+        path: "userId",
+        select: ["fullName"]
+      })
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    // Total reviews
+    const totalReviews = allReviews.length;
+
+    // Rating breakdown
+    const ratingBreakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+    allReviews.forEach(r => {
+      ratingBreakdown[r.rating] = (ratingBreakdown[r.rating] || 0) + 1;
+    });
+
+    // Average rating
+    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    const averageRating = (totalRating / totalReviews).toFixed(1);
+
+    return res.status(200).json({
+      success: true,
+      reviews:all_reviews,
+      totalReviews,
+      averageRating,
+      ratingBreakdown
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Internal server error: ${error}`
+    });
+  }
+};
+
+
 export const postReview = async (req, res) => {
     try {
         const { productId, rating, review } = req.body;

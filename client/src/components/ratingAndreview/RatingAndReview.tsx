@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, CheckCircle } from 'lucide-react';
+import AddReviewDialog from '../models/AddReviewModel';
 
 interface Review {
     id: string;
@@ -32,7 +33,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     onWriteReview
 }) => {
     const maxCount = Math.max(...ratingBreakdown.map(r => r.count));
-
+    const [isReviewDialogBoxOpen,setIsDialogBoxOpen] = useState(false);
     const renderStars = (rating: number, size = 'w-4 h-4') => {
         return (
             <div className="flex items-center gap-0.5">
@@ -59,8 +60,8 @@ const ProductReview: React.FC<ProductReviewProps> = ({
             {/* Mobile: Button at top */}
             <div className="lg:hidden mb-6">
                 <button
-                    onClick={onWriteReview}
-                    className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium px-6 py-3 rounded-md text-sm transition-colors duration-200"
+                    onClick={()=>setIsDialogBoxOpen(true)}
+                    className="w-full bg-purple-500 cursor-pointer hover:bg-purple-600 text-white font-medium px-6 py-3 rounded-md text-sm transition-colors duration-200"
                 >
                     WRITE A PRODUCT REVIEW
                 </button>
@@ -125,8 +126,8 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                             <div className="hidden lg:block lg:ml-6">
 
                                 <button
-                                    onClick={onWriteReview}
-                                    className="bg-purple-500 hover:bg-purple-600 text-white font-medium px-6 py-4 rounded-sm text-sm transition-colors duration-200 whitespace-nowrap"
+                                    onClick={()=>setIsDialogBoxOpen(true)}
+                                    className="bg-purple-500 cursor-pointer hover:bg-purple-600 text-white font-medium px-6 py-4 rounded-sm text-sm transition-colors duration-200 whitespace-nowrap"
                                 >
                                     WRITE A PRODUCT REVIEW
                                 </button>
@@ -166,8 +167,9 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                         </div>
                     </div>
                 </div>
-
-
+{
+    isReviewDialogBoxOpen && <AddReviewDialog isOpen={isReviewDialogBoxOpen} onClose={()=>setIsDialogBoxOpen(false)} />    
+}
             </div>
         </div>
     );
@@ -231,7 +233,7 @@ export default function App() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto ">
                 <ProductReview
                     overallRating={sampleData.overallRating}
                     totalVerifiedBuyers={sampleData.totalVerifiedBuyers}

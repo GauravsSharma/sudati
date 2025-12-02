@@ -68,6 +68,7 @@ interface Address {
 }
 
 interface MainProduct{
+  _id:string
   title:string,
   price:number,
   originalPrice:number,
@@ -87,4 +88,20 @@ interface Variant{
   },
   color:string,
   _id:string
+}
+
+interface ReviewUser {
+  username: string;
+}
+
+interface ProductReview {
+  _id: string;
+  review: string;
+  rating: number;
+  userId: ReviewUser;
+  createdAt: string;
+  userId:{
+    _id:string,
+    fullName:string
+  }
 }

@@ -6,71 +6,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import RatingAndReview from "../../../../components/ratingAndreview/RatingAndReview"
 import { useProductStore } from '@/stores/buyer/products.store';
-// TypeScript Interfaces
-interface MainProduct {
-  _id: string;
-  title: string;
-  price: number;
-  originalPrice: number;
-  discountPercentage: number;
-  description: string;
-  images: {
-    url: string;
-    public_id: string;
-  }[];
-}
-
-interface Variant {
-  thumbnail: {
-    url: string;
-    public_id: string;
-  };
-  color: string;
-  _id: string;
-}
+import { useGetReviews } from '@/hooks/buyer/useReview';
 
 type Section = 'details' | 'return' | 'shipping' | 'seller' | 'help';
-
-// // Mock hook - replace with your actual hook
-// const useGetMainProduct = (productId: string) => {
-//   // Replace this with your actual hook
-//   return {
-//     data: {
-//       _id: productId,
-//       title: "Blue Banarasi Silk Woven Saree",
-//       price: 799,
-//       originalPrice: 2577,
-//       discountPercentage: 69,
-//       description: "Beautiful handwoven Banarasi silk saree with traditional motifs. Perfect for special occasions.\n\nFabric: Pure Silk\nWork: Handwoven\nLength: 5.5 meters\nCare: Dry clean only",
-//       images: [
-//         { url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800", public_id: "img1" },
-//         { url: "https://images.unsplash.com/photo-1583391733975-5e5f9e9d8d16?w=800", public_id: "img2" },
-//         { url: "https://images.unsplash.com/photo-1617042375876-a13e36732a04?w=800", public_id: "img3" },
-//         { url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800", public_id: "img4" }
-//       ]
-//     },
-//     isPending: false
-//   };
-// };
-
-// // Mock variants - replace with your actual data
-const mockVariants: Variant[] = [
-  {
-    _id: "var1",
-    color: "Black",
-    thumbnail: { url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300", public_id: "thumb1" }
-  },
-  {
-    _id: "var2",
-    color: "Purple",
-    thumbnail: { url: "https://images.unsplash.com/photo-1583391733975-5e5f9e9d8d16?w=300", public_id: "thumb2" }
-  },
-  {
-    _id: "var3",
-    color: "Yellow",
-    thumbnail: { url: "https://images.unsplash.com/photo-1617042375876-a13e36732a04?w=300", public_id: "thumb3" }
-  }
-];
 
 const ProductPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -89,11 +27,11 @@ const ProductPage = () => {
   const productId = params.id as string;
 
   const { data: product, isPending } = useGetMainProduct(productId);
-  const variants = useProductStore(s=>s.variants); // Replace with your actual variants data
-console.log(variants);
+  const { data, isPending: isReviewsLoading } = useGetReviews(productId)
+  console.log(data);
 
-  // Mock data for ratings
-  const rating = 4.5;
+  const variants = useProductStore(s => s.variants); 
+  const rating = data?.averageRating;
   const reviews = 93;
   const recentPurchases = 481;
 
@@ -140,9 +78,8 @@ console.log(variants);
                 {productImages.map((image, index) => (
                   <div
                     key={image.public_id}
-                    className={`cursor-pointer border-2 rounded-lg overflow-hidden flex-shrink-0 ${
-                      selectedImage === index ? 'border-purple-700' : 'border-gray-200'
-                    }`}
+                    className={`cursor-pointer border-2 rounded-lg overflow-hidden flex-shrink-0 ${selectedImage === index ? 'border-purple-700' : 'border-gray-200'
+                      }`}
                     onClick={() => setSelectedImage(index)}
                   >
                     <img
@@ -214,7 +151,7 @@ console.log(variants);
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className={`w-5 h-5 ${star <= Math.floor(rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                    className={`w-5 h-5 ${star <= Math.floor(Number(rating)) ? 'text-yellow-400' : 'text-gray-300'}`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -334,7 +271,7 @@ console.log(variants);
                   {variants.map((variant) => (
                     <div
                       key={variant._id}
-                      onClick={()=>{router.push(`/item/${variant._id}`)}}
+                      onClick={() => { router.push(`/item/${variant._id}`) }}
                       className={`cursor-pointer border-2 rounded-lg overflow-hidden transition border-gray-200`}
                     >
                       <img
@@ -450,7 +387,7 @@ console.log(variants);
           </div>
         </div>
       </div>
-      <RatingAndReview/>
+      <RatingAndReview />
     </div>
   );
 };
