@@ -8,6 +8,7 @@ import RatingAndReview from "../../../../components/ratingAndreview/RatingAndRev
 import { useProductStore } from '@/stores/buyer/products.store';
 import { useGetReviews } from '@/hooks/buyer/useReview';
 import AddReviewDialog from '@/components/models/AddReviewModel';
+import { useReviewStore } from '@/stores/buyer/review.store';
 
 type Section = 'details' | 'return' | 'shipping' | 'seller' | 'help';
 
@@ -29,12 +30,17 @@ const ProductPage = () => {
   const productId = params.id as string;
 
   const { data: product, isPending } = useGetMainProduct(productId);
-  const { data, isPending: isReviewsLoading } = useGetReviews(productId)
-  console.log(data);
+  const {isPending: isReviewsLoading } = useGetReviews(productId)
+  const reviews = useReviewStore(s=>s.reviews)
+  const totalReviews = useReviewStore(s=>s.totalReviews)
+  const averageRating = useReviewStore(s=>s.averageRating)
+  const ratingBreakdown = useReviewStore(s=>s.ratingBreakdown)
+
+  // console.log(data);
 
   const variants = useProductStore(s => s.variants);
-  const rating = data?.averageRating;
-  const reviews = data?.reviews?.length;
+  const rating = averageRating;
+  const reviewsLen = reviews?.length;
   const recentPurchases = 15;
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -161,7 +167,7 @@ const ProductPage = () => {
                   </svg>
                 ))}
               </div>
-              <span className="text-sm text-gray-600">({reviews})</span>
+              <span className="text-sm text-gray-600">({reviewsLen})</span>
             </div>
 
             {/* Recent Purchases */}
@@ -390,17 +396,17 @@ const ProductPage = () => {
         </div>
       </div>
       {
-        !isReviewsLoading && data && data?.reviews?.length > 0 && <RatingAndReview
-          overallRating={Number(data.averageRating)}
-          reviews={data?.reviews}
-          ratingBreakdown={data?.ratingBreakdown}
+        !isReviewsLoading &&ratingBreakdown && reviews && reviews?.length > 0 && <RatingAndReview
+          overallRating={Number(averageRating)}
+          reviews={reviews}
+          ratingBreakdown={ratingBreakdown}
           setIsOpen={setIsDialogBoxOpen}
         />
       }
       {
         isReviewDialogBoxOpen && <AddReviewDialog isOpen={isReviewDialogBoxOpen} onClose={() => setIsDialogBoxOpen(false)} />
       }
-      {data && data.totalReviews===0 && 
+      {totalReviews===0 && 
         <div className="mb-6 flex justify-center items-center py-20">
           <button
             onClick={() => setIsDialogBoxOpen(true)}

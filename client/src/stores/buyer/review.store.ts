@@ -1,12 +1,5 @@
 import { create } from "zustand";
 
-type RatingBreakdown = {
-  1: number;
-  2: number;
-  3: number;
-  4: number;
-  5: number;
-};
 
 type ReviewStoreState = {
   reviews: ProductReview[] | null;
@@ -16,6 +9,8 @@ type ReviewStoreState = {
 
   // setters
   setReviews: (reviews: ProductReview[] | null) => void;
+  setSingleReview: (review: ProductReview | null) => void;
+  removeSingleReview: (id: string | null) => void;
   setTotalReviews: (count: number | null) => void;
   setAverageRating: (rating: number | null) => void;
   setRatingBreakdown: (breakdown: RatingBreakdown | null) => void;
@@ -29,7 +24,7 @@ type ReviewStoreState = {
   }) => void;
 };
 
-export const useReviewStore = create<ReviewStoreState>((set) => ({
+export const useReviewStore = create<ReviewStoreState>((set, get) => ({
   reviews: null,
   totalReviews: null,
   averageRating: null,
@@ -37,15 +32,28 @@ export const useReviewStore = create<ReviewStoreState>((set) => ({
 
   // --- Setters ---
   setReviews: (reviews) => set({ reviews }),
+  removeSingleReview:(id)=>{
+      const current = get().reviews ?? [];
+      const all_review = current.filter(r=>r._id!==id);
+      set({reviews:all_review})
+  },
+  setSingleReview: (review) => {
+    if (!review) return;
+
+    const current = get().reviews ?? [];
+    set({ reviews: [review, ...current] });
+  },
+
   setTotalReviews: (totalReviews) => set({ totalReviews }),
   setAverageRating: (averageRating) => set({ averageRating }),
   setRatingBreakdown: (ratingBreakdown) => set({ ratingBreakdown }),
 
   // update everything in one call
-  setReviewData: (data) => set({
-    reviews: data.reviews,
-    totalReviews: data.totalReviews,
-    averageRating: data.averageRating,
-    ratingBreakdown: data.ratingBreakdown,
-  }),
+  setReviewData: (data) =>
+    set({
+      reviews: data.reviews,
+      totalReviews: data.totalReviews,
+      averageRating: data.averageRating,
+      ratingBreakdown: data.ratingBreakdown,
+    }),
 }));

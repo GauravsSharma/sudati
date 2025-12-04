@@ -18,21 +18,11 @@ const EcomNav = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
-
- 
-
-
-
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if ( currentScrollY > 50) {
-        // Scrolling down
-        console.log(currentScrollY);
-        
+      if ( currentScrollY > 50) {  
         setShowTopBar(false);
       } else {
         // Scrolling up

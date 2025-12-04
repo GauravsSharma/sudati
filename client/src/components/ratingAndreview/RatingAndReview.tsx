@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { Star, CheckCircle } from 'lucide-react';
+import { Star, CheckCircle, Delete, DeleteIcon, Trash2 } from 'lucide-react';
 import AddReviewDialog from '../models/AddReviewModel';
+import { useUserStore } from '@/stores/user.store';
+import { Trash } from 'lucide';
+import DeleteReviewDialog from '../models/DeleteReviewModel';
+import { formatReviewDate } from '@/utils/dateFomater';
 
 interface ProductReviewProps {
     overallRating: number;
-    ratingBreakdown:{
-        1:number,
-        2:number,
-        3:number,
-        4:number,
-        5:number,
-    };
+    ratingBreakdown:RatingBreakdown;
     reviews: ProductReview[];
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -22,7 +20,9 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     reviews,
     setIsOpen
 }) => {
-    console.log(ratingBreakdown);
+   const user = useUserStore(s=>s.user)
+   const [reviewId,setReviewId] = useState<string|undefined>()
+   const [isReviewDialogBoxOpen,setIsReviewDialogBoxOpen]  = useState(false)
     const ratingBreakdownArray = Object.entries(ratingBreakdown).map(([stars, count]) => ({
         stars: Number(stars),
         count
@@ -133,8 +133,13 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                             <p className="text-sm text-gray-700 mb-4">Images uploaded by customers:</p>
 
                             <div className="space-y-4 w-full overflow-y-auto max-h-96">
-                                {reviews.map((review) => (
-                                    <div key={review._id} className="border w-full border-gray-200 rounded-lg p-3 sm:p-4">
+                                {reviews && reviews.map((review) => (
+                                    <div key={review._id} className="border  w-full border-gray-200 rounded-lg p-3 sm:p-4 relative">
+                                     {  review?.userId?._id === user?._id &&<div className='p-2 bg-red-200 rounded-full cursor-pointer flex justify-center items-center absolute top-1 right-1'
+                                     onClick={()=>{setReviewId(review._id);setIsReviewDialogBoxOpen(true)}}
+                                     >
+                                          <Trash2 size={15} className=' text-red-600  '/>
+                                       </div>}
                                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 {renderStars(review.rating, 'w-3 h-3 sm:w-4 sm:h-4')}
@@ -145,8 +150,8 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                                                     <CheckCircle className="w-4 h-4 text-green-500" />
                                             
                                             </div>
-                                            <span className="text-xs sm:text-sm text-gray-500 flex-shrink-0">
-                                                {review.createdAt}
+                                            <span className="text-xs pr-10 sm:text-sm text-gray-500 flex-shrink-0">
+                                                {formatReviewDate(review.createdAt)}
                                             </span>
                                         </div>
 
@@ -161,6 +166,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                 </div>
 
             </div>
+            {isReviewDialogBoxOpen && reviewId && <DeleteReviewDialog isOpen={isReviewDialogBoxOpen} setIsOpen={setIsReviewDialogBoxOpen} reviewId={reviewId}/>}
         </div>
     );
 };
