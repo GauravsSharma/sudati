@@ -9,10 +9,10 @@ interface ReviewDataPayload{
     review:string
 }
 interface reviewResponse{
-  reviews:ProductReview,
+  reviews:ProductReview[],
   averageRating:string,
   totalReviews:number,
-  ratingBreakDown:{
+  ratingBreakdown:{
     1:number
     2:number
     3:number

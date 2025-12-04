@@ -58,7 +58,7 @@ export const getReviewsByProductId = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      reviews:all_reviews,
+      reviews:all_reviews.length > 0? all_reviews : [],
       totalReviews,
       averageRating,
       ratingBreakdown

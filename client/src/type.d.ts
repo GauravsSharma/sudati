@@ -91,7 +91,8 @@ interface Variant{
 }
 
 interface ReviewUser {
-  username: string;
+  _id: string;
+  fullName:string
 }
 
 interface ProductReview {
@@ -100,8 +101,4 @@ interface ProductReview {
   rating: number;
   userId: ReviewUser;
   createdAt: string;
-  userId:{
-    _id:string,
-    fullName:string
-  }
 }
