@@ -7,10 +7,12 @@ import { useRouter } from 'next/navigation'
 import RatingAndReview from "../../../../components/ratingAndreview/RatingAndReview"
 import { useProductStore } from '@/stores/buyer/products.store';
 import { useGetReviews } from '@/hooks/buyer/useReview';
+import AddReviewDialog from '@/components/models/AddReviewModel';
 
 type Section = 'details' | 'return' | 'shipping' | 'seller' | 'help';
 
 const ProductPage = () => {
+  const [isReviewDialogBoxOpen, setIsDialogBoxOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [pincode, setPincode] = useState('');
@@ -30,10 +32,10 @@ const ProductPage = () => {
   const { data, isPending: isReviewsLoading } = useGetReviews(productId)
   console.log(data);
 
-  const variants = useProductStore(s => s.variants); 
+  const variants = useProductStore(s => s.variants);
   const rating = data?.averageRating;
-  const reviews = 93;
-  const recentPurchases = 481;
+  const reviews = data?.reviews?.length;
+  const recentPurchases = 15;
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
@@ -387,7 +389,27 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
-      <RatingAndReview />
+      {
+        !isReviewsLoading && data && data?.reviews?.length > 0 && <RatingAndReview
+          overallRating={Number(data.averageRating)}
+          reviews={data?.reviews}
+          ratingBreakdown={data?.ratingBreakdown}
+          setIsOpen={setIsDialogBoxOpen}
+        />
+      }
+      {
+        isReviewDialogBoxOpen && <AddReviewDialog isOpen={isReviewDialogBoxOpen} onClose={() => setIsDialogBoxOpen(false)} />
+      }
+      {data && data.totalReviews===0 && 
+        <div className="mb-6 flex justify-center items-center py-20">
+          <button
+            onClick={() => setIsDialogBoxOpen(true)}
+            className="w-1/5 mx-auto bg-purple-500 cursor-pointer hover:bg-purple-600 text-white font-medium px-6 py-3 rounded-md text-md  transition-colors duration-200"
+          >
+            WRITE A PRODUCT REVIEW
+          </button>
+        </div>
+      }
     </div>
   );
 };

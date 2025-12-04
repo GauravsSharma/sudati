@@ -2,38 +2,33 @@ import React, { useState } from 'react';
 import { Star, CheckCircle } from 'lucide-react';
 import AddReviewDialog from '../models/AddReviewModel';
 
-interface Review {
-    id: string;
-    rating: number;
-    customerName: string;
-    date: string;
-    title: string;
-    comment: string;
-    isVerified: boolean;
-}
-
-interface RatingBreakdown {
-    stars: number;
-    count: number;
-}
-
 interface ProductReviewProps {
     overallRating: number;
-    totalVerifiedBuyers: number;
-    ratingBreakdown: RatingBreakdown[];
-    reviews: Review[];
-    onWriteReview?: () => void;
+    ratingBreakdown:{
+        1:number,
+        2:number,
+        3:number,
+        4:number,
+        5:number,
+    };
+    reviews: ProductReview[];
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 
 const ProductReview: React.FC<ProductReviewProps> = ({
     overallRating,
-    totalVerifiedBuyers,
     ratingBreakdown,
     reviews,
-    onWriteReview
+    setIsOpen
 }) => {
-    const maxCount = Math.max(...ratingBreakdown.map(r => r.count));
-    const [isReviewDialogBoxOpen,setIsDialogBoxOpen] = useState(false);
+    console.log(ratingBreakdown);
+    const ratingBreakdownArray = Object.entries(ratingBreakdown).map(([stars, count]) => ({
+        stars: Number(stars),
+        count
+    }));
+    
+    const maxCount = Math.max(...ratingBreakdownArray.map(r => r.count));
     const renderStars = (rating: number, size = 'w-4 h-4') => {
         return (
             <div className="flex items-center gap-0.5">
@@ -56,11 +51,11 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-16">
             {/* Mobile: Button at top */}
             <div className="lg:hidden mb-6">
                 <button
-                    onClick={()=>setIsDialogBoxOpen(true)}
+                    onClick={()=>setIsOpen(true)}
                     className="w-full bg-purple-500 cursor-pointer hover:bg-purple-600 text-white font-medium px-6 py-3 rounded-md text-sm transition-colors duration-200"
                 >
                     WRITE A PRODUCT REVIEW
@@ -82,7 +77,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                                 <Star className="w-6 h-6 sm:w-8 sm:h-8 fill-green-500 text-green-500" />
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <span>{totalVerifiedBuyers} Verified Buyers</span>
+                                <span>{reviews.length} Verified Buyers</span>
                                 <CheckCircle className="w-4 h-4 text-green-500" />
                             </div>
                         </div>
@@ -91,7 +86,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                         <div className="border-l-3 border-purple-500 pl-2 sm:pl-4">
                             <div className="space-y-2">
                                 {[5, 4, 3, 2, 1].map((stars) => {
-                                    const breakdown = ratingBreakdown.find(r => r.stars === stars);
+                                    const breakdown = ratingBreakdownArray.find(r => r.stars === stars);
                                     const count = breakdown?.count || 0;
 
                                     return (
@@ -126,7 +121,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                             <div className="hidden lg:block lg:ml-6">
 
                                 <button
-                                    onClick={()=>setIsDialogBoxOpen(true)}
+                                    onClick={()=>setIsOpen(true)}
                                     className="bg-purple-500 cursor-pointer hover:bg-purple-600 text-white font-medium px-6 py-4 rounded-sm text-sm transition-colors duration-200 whitespace-nowrap"
                                 >
                                     WRITE A PRODUCT REVIEW
@@ -139,109 +134,34 @@ const ProductReview: React.FC<ProductReviewProps> = ({
 
                             <div className="space-y-4 w-full overflow-y-auto max-h-96">
                                 {reviews.map((review) => (
-                                    <div key={review.id} className="border w-full border-gray-200 rounded-lg p-3 sm:p-4">
+                                    <div key={review._id} className="border w-full border-gray-200 rounded-lg p-3 sm:p-4">
                                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 {renderStars(review.rating, 'w-3 h-3 sm:w-4 sm:h-4')}
                                                 <span className="text-sm font-medium text-gray-900">
-                                                    {review.customerName}
+                                                    {review.userId.fullName}
                                                 </span>
-                                                {review.isVerified && (
+                                    
                                                     <CheckCircle className="w-4 h-4 text-green-500" />
-                                                )}
+                                            
                                             </div>
                                             <span className="text-xs sm:text-sm text-gray-500 flex-shrink-0">
-                                                {review.date}
+                                                {review.createdAt}
                                             </span>
                                         </div>
 
                                         <h4 className="font-medium text-gray-900 mb-1 text-sm sm:text-base">
-                                            {review.title}
+                                            {review.review}
                                         </h4>
-                                        <p className="text-sm text-gray-700 break-words">
-                                            {review.comment}
-                                        </p>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
                 </div>
-{
-    isReviewDialogBoxOpen && <AddReviewDialog isOpen={isReviewDialogBoxOpen} onClose={()=>setIsDialogBoxOpen(false)} />    
-}
+
             </div>
         </div>
     );
 };
-
-// Example usage with sample data
-const sampleData = {
-    overallRating: 4.75,
-    totalVerifiedBuyers: 4,
-    ratingBreakdown: [
-        { stars: 5, count: 3 },
-        { stars: 4, count: 1 },
-        { stars: 3, count: 0 },
-        { stars: 2, count: 0 },
-        { stars: 1, count: 0 }
-    ],
-    reviews: [
-        {
-            id: '1',
-            rating: 5,
-            customerName: 'Sharanu',
-            date: '14 Jul, 2025',
-            title: 'Product Review',
-            comment: 'Good Product',
-            isVerified: true
-        },
-        {
-            id: '2',
-            rating: 5,
-            customerName: 'Pritam',
-            date: '13 Jul, 2025',
-            title: 'so good',
-            comment: 'so good quality',
-            isVerified: true
-        },
-        {
-            id: '3',
-            rating: 5,
-            customerName: 'Ravi',
-            date: '26 Jun, 2025',
-            title: 'good product',
-            comment: 'goo',
-            isVerified: true
-        },
-        {
-            id: '4',
-            rating: 5,
-            customerName: 'Ravi',
-            date: '26 Jun, 2025',
-            title: 'good product',
-            comment: 'goo',
-            isVerified: true
-        }
-    ]
-};
-
-export default function App() {
-    const handleWriteReview = () => {
-        console.log('Write review clicked');
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-8">
-            <div className="max-w-7xl mx-auto ">
-                <ProductReview
-                    overallRating={sampleData.overallRating}
-                    totalVerifiedBuyers={sampleData.totalVerifiedBuyers}
-                    ratingBreakdown={sampleData.ratingBreakdown}
-                    reviews={sampleData.reviews}
-                    onWriteReview={handleWriteReview}
-                />
-            </div>
-        </div>
-    );
-}
+export default ProductReview
