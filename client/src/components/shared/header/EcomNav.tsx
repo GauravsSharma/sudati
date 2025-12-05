@@ -1,22 +1,17 @@
 "use client";
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, User, ShoppingCart, Menu, X } from 'lucide-react';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-   "Banarasi Sarees",
-  "Kanjivaram Sarees",
-  "Silk Sarees",
-  "Cotton Sarees",
-  "Chiffon Sarees",
-  "Georgette Sarees",
-  // "Organza Sarees",
-  // "Linen Sarees",
-  // "Bandhani Sarees",
-  // "Designer Sarees"
-
+    "Banarasi Sarees",
+    "Kanjivaram Sarees",
+    "Silk Sarees",
+    "Cotton Sarees",
+    "Chiffon Sarees",
+    "Georgette Sarees",
   ];
 
   const topLinks = [
@@ -60,7 +55,7 @@ export default function Header() {
             {/* Top Links */}
             <div className="flex items-center">
               {topLinks.map((link, index) => (
-                <React.Fragment key={index}>
+                <div key={link} className="flex items-center">
                   <a
                     href="#"
                     className="text-white hover:opacity-80 text-xs font-medium transition-opacity px-3"
@@ -70,7 +65,7 @@ export default function Header() {
                   {index < topLinks.length - 1 && (
                     <span className="text-white text-xs">|</span>
                   )}
-                </React.Fragment>
+                </div>
               ))}
             </div>
           </div>
@@ -96,8 +91,8 @@ export default function Header() {
             {/* Navigation */}
             <nav className="flex-1 flex justify-center">
               <ul className="flex items-center space-x-6">
-                {navItems.map((item, index) => (
-                  <li key={index}>
+                {navItems.map((item) => (
+                  <li key={item}>
                     <a
                       href="#"
                       className="text-gray-700 hover:text-pink-500 text-[15px] font-medium transition-colors"
@@ -175,8 +170,8 @@ export default function Header() {
           <div className="border-t border-gray-200 bg-white">
             <nav className="px-4 py-4">
               <ul className="space-y-3">
-                {navItems.map((item, index) => (
-                  <li key={index}>
+                {navItems.map((item) => (
+                  <li key={item}>
                     <a
                       href="#"
                       className="block text-gray-700 hover:text-pink-500 text-sm font-medium py-2"
