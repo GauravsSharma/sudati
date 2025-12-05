@@ -1,192 +1,205 @@
 "use client";
+import React, { useState } from 'react';
+import { Search, User, ShoppingCart, Menu, X } from 'lucide-react';
 
-import LoginModal from "@/components/models/LoginModel";
-import { useUserStore } from "@/stores/user.store";
-import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-const EcomNav = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showTopBar, setShowTopBar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
-  const [becomeASeller, setBecomeASeller] = useState(false);
-  const [searchTerm,setSearchTerm]=useState('');
-  const user = useUserStore((s) => s.user);
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+  const navItems = [
+   "Banarasi Sarees",
+  "Kanjivaram Sarees",
+  "Silk Sarees",
+  "Cotton Sarees",
+  "Chiffon Sarees",
+  "Georgette Sarees",
+  // "Organza Sarees",
+  // "Linen Sarees",
+  // "Bandhani Sarees",
+  // "Designer Sarees"
 
-      if ( currentScrollY > 50) {  
-        setShowTopBar(false);
-      } else {
-        // Scrolling up
-        setShowTopBar(true);
-      }
+  ];
 
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  const topLinks = [
+    'Track Order',
+    'Contact Us',
+    'Become a Seller',
+  ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      {/* Top Bar with fixed height container to prevent jittering */}
-      <div className="hidden md:block bg-white border-b border-gray-100 overflow-hidden transition-all duration-300 ease-in-out" 
-           style={{ height: showTopBar ? '32px' : '0px' }}>
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-end mt-2 items-center space-x-2 text-sm text-gray-600">
-            <Link href="#" className="hover:text-gray-800 transition-colors text-xs font-semibold">
-              Track Order
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link href="#" className="hover:text-gray-800 transition-colors text-xs font-semibold">
-              Store Locator
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link href="/contact_us" className="hover:text-gray-800 transition-colors text-xs font-semibold">
-              Contact Us
-            </Link>
-            { !user && <span className="text-gray-300">|</span>}
-           {!user &&  <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
-            onClick={() => {setIsOpen(true);setBecomeASeller(false)}}
-            >
-              Login
-            </button>}
-            { <span className="text-gray-300">|</span>}
-           { <button className="hover:text-gray-800 cursor-pointer transition-colors text-xs font-semibold"
-            onClick={() => {setIsOpen(true);setBecomeASeller(true)}}
-            >
-              Become a Seller
-            </button>}
+    <>
+      {/* Top Bar */}
+      <div className="bg-gradient-to-r from-pink-400 to-purple-400 hidden md:block">
+        <div className="max-w-7xl mx-auto px-4 sm:px-2">
+          <div className="flex items-center justify-between h-12">
+            {/* Social Icons */}
+            <div className="flex items-center space-x-4">
+              <a href="#" className="text-white hover:opacity-80 transition-opacity">
+                <svg className="w-6 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                </svg>
+              </a>
+              <a href="#" className="text-white hover:opacity-80 transition-opacity">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                </svg>
+              </a>
+              <a href="#" className="text-white hover:opacity-80 transition-opacity">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"/>
+                </svg>
+              </a>
+              <a href="#" className="text-white hover:opacity-80 transition-opacity">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z"/>
+                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+                </svg>
+              </a>
+            </div>
+
+            {/* Top Links */}
+            <div className="flex items-center">
+              {topLinks.map((link, index) => (
+                <React.Fragment key={index}>
+                  <a
+                    href="#"
+                    className="text-white hover:opacity-80 text-xs font-medium transition-opacity px-3"
+                  >
+                    {link}
+                  </a>
+                  {index < topLinks.length - 1 && (
+                    <span className="text-white text-xs">|</span>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-      <LoginModal isOpen={isOpen} setIsOpen={setIsOpen} becomeASeller = {becomeASeller}/>
-      {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-           <Link href={"/"}>
-             <Image height={200} width={200} alt="" src={"/viron.png"} />
-           </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <div className="flex space-x-4 items-center">
-            <div className="hidden lg:flex items-center space-x-8">
-              {["TRENDING 2025", "T-SHIRTS", "SHIRTS", "BOTTOMS", "JACKETS"].map(
-                (item) => (
-                  <Link
-                    key={item}
-                    href="#"
-                    className="text-gray-700 text-xs tracking-wider font-sans hover:text-gray-900 font-bold transition-colors"
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
+      {/* Desktop Header */}
+      <header className="hidden md:block bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-2">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="flex items-center gap-1">
+                <span className="text-3xl font-bold text-pink-500">peach</span>
+                <div className="w-7 h-7 bg-gradient-to-br from-orange-300 to-pink-400 rounded-full relative">
+                  <div className="absolute top-0 right-0 w-2 h-3 bg-green-400 rounded-br-full"></div>
+                </div>
+                <span className="text-3xl font-bold text-pink-500">mode</span>
+                <span className="text-pink-500 text-xs ml-0.5">®</span>
+              </div>
             </div>
 
-            {/* Search Bar & Icons */}
-            <div className="flex items-center space-x-4">
-              {/* Search Bar */}
-              <div className="hidden md:flex items-center relative">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    placeholder="Search for products"
-                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 bg-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400"
-                  />
+            {/* Navigation */}
+            <nav className="flex-1 flex justify-center">
+              <ul className="flex items-center space-x-6">
+                {navItems.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="text-gray-700 hover:text-pink-500 text-[15px] font-medium transition-colors"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Right Icons */}
+            <div className="flex items-center space-x-6">
+              <button className="text-gray-700 hover:text-pink-500 transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+              <a href="#" className="text-gray-700 hover:text-pink-500 text-[15px] font-medium transition-colors">
+                Login
+              </a>
+              <button className="relative text-gray-700 hover:text-pink-500 transition-colors">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  0
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Header */}
+      <header className="md:hidden bg-white border-b border-gray-200">
+        <div className="px-4">
+          <div className="flex items-center justify-between h-14">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-gray-700"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="flex items-center gap-1">
+                <span className="text-2xl font-bold text-pink-500">peach</span>
+                <div className="w-5 h-5 bg-gradient-to-br from-orange-300 to-pink-400 rounded-full relative">
+                  <div className="absolute top-0 right-0 w-1.5 h-2 bg-green-400 rounded-br-full"></div>
                 </div>
+                <span className="text-2xl font-bold text-pink-500">mode</span>
+                <span className="text-pink-500 text-xs ml-0.5">®</span>
               </div>
+            </div>
 
-              {/* Icons */}
-              <div className="flex items-center space-x-1">
-                <Link href="/account/wishlist" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Heart size={24} className="text-gray-600" />
-                </Link>
-                <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-                  <ShoppingBag size={24} className="text-gray-600" />
-                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                    2
-                  </span>
-                </Link>
-              </div>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={toggleMobileMenu}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                {isMobileMenuOpen ? (
-                  <X size={24} className="text-gray-600" />
-                ) : (
-                  <Menu size={24} className="text-gray-600" />
-                )}
+            {/* Right Icons */}
+            <div className="flex items-center space-x-4">
+              <button className="text-gray-700">
+                <Search className="w-5 h-5" />
+              </button>
+              <button className="text-gray-700">
+                <User className="w-5 h-5" />
+              </button>
+              <button className="relative text-gray-700">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1.5 -right-1.5 bg-gray-800 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  0
+                </span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
-        <div className="md:hidden pb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search for products"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400"
-              onChange={(e) => setSearchTerm(e.target.value)}
-           
-           />
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="border-t border-gray-200 bg-white">
+            <nav className="px-4 py-4">
+              <ul className="space-y-3">
+                {navItems.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="block text-gray-700 hover:text-pink-500 text-sm font-medium py-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+                <li className="pt-2 border-t border-gray-200">
+                  <a
+                    href="#"
+                    className="block text-gray-700 hover:text-pink-500 text-sm font-medium py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-200">
-          <div className="px-4 py-2 space-y-1">
-            {["TRENDING 2025", "NEW ARRIVALS", "T-SHIRTS", "SHIRTS", "BOTTOMS", "JACKETS", "ACCESSORIES"].map(
-              (item) => (
-                <Link
-                  key={item}
-                  href="#"
-                  className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium transition-colors"
-                >
-                  {item}
-                </Link>
-              )
-            )}
-
-            {/* Mobile Top Bar Links */}
-            <div className="pt-4 border-t border-gray-200 mt-4">
-              {["Track Order", "Store Locator", "Contact Us", "Login"].map((text) => (
-                <Link
-                  key={text}
-                  href="#"
-                  className="block px-3 py-2 text-gray-600 hover:text-gray-800 rounded-lg transition-colors text-sm"
-                >
-                  {text}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </nav>
+        )}
+      </header>
+    </>
   );
-};
-
-export default EcomNav;
+}
